@@ -1,0 +1,21 @@
+{
+  "name": "homebridge-samsung-airconditioner-specialmode",
+  "version": "0.1.0",
+  "description": "node.js plugin for the Samsung smart samsung-airconditioners-specialmode",
+"main" : "index.js",
+ 
+  "keywords": [
+    "Samsung",
+    "Air Conditioner",
+"homebridge-plugin"
+  ],
+  "engines": {
+    "node": ">=0.8",
+"homebridge": ">=0.1"
+  },
+  "dependencies": {
+        "exec": ">= 0.1.0",
+    "jq": ">=0.1.0",
+    "curl": ">=0.1.0"
+  }
+}
