@@ -36,7 +36,7 @@ SamsungAirco.prototype = {
         //uuid = UUIDGen.generate(this.accessoryName);
         this.aircoSamsung = new Service.Switch(this.name);
 	
-	//스위치 설정
+	//스피드모드 스위치 설정
 	this.Speedmodeon(Characteristic.speedmodeOn);
 	this.Speedmodeoff(Characteristic.speedmodeoff);
 	    
