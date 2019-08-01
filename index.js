@@ -6,7 +6,7 @@ module.exports = function(homebridge) {
     Characteristic = homebridge.hap.Characteristic;
     Accessory = homebridge.hap.Accessory;
     //UUIDGen = homebridge.hap.uuid;
-    homebridge.registerAccessory('homebridge-samsung-airconditioner-specialmode', 'SamsungAirconditioner', SamsungAirco);
+    homebridge.registerAccessory('homebridge-samsung-airconditioner-specialmode', 'SamsungAirconditionerspecialmode', SamsungAirco);
 }
 
 function SamsungAirco(log, config) {
