@@ -1,2 +1,3 @@
 # samsung-airconditioner-Specialmode
 homebridge-samsung-airconditioner-Specialmode
+살려줘...
