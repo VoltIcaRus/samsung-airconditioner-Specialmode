@@ -35,17 +35,79 @@ SamsungAirco.prototype = {
         //var uuid;
         //uuid = UUIDGen.generate(this.accessoryName);
         this.aircoSamsung = new Service.Switch(this.name);
-	
-	//스피드모드 스위치 설정
-	this.Speedmodeon(Characteristic.speedmodeOn);
-	this.Speedmodeoff(Characteristic.speedmodeoff);
-	    
+
+        //전원 설정
+        this.aircoSamsung.getCharacteristic(Characteristic.On)
+            .on('get', this.getOn.bind(this))
+            .on('set', this.setOn.bind(this));
+
+
+        var informationService = new Service.AccessoryInformation()
+            .setCharacteristic(Characteristic.Manufacturer, 'Samsung')
+            .setCharacteristic(Characteristic.Model, 'Air conditioner SW')
+            .setCharacteristic(Characteristic.SerialNumber, 'AF18M9970GFK');
+
+
+        return [informationService, this.aircoSamsung];
+    },
+
     //services
-    Service.Switch = function(callback) {
-	Service.call(this, Speedmodeon, 'curl -X PUT -d \'{"options": ["Comode_Speed"]}\' -v -k -H "Content-Type: application/json" -H "Authorization: Bearer ' + this.token + '" --cert ' + this.patchCert + ' --insecure https://' + this.ip + ':8888/devices/0/mode';', subtype);
-        }
-    Service.Switch = function(callback) {
-	Service.call(this, Speedmodeoff, 'curl -X PUT -d \'{"options": ["Comode_off"]}\' -v -k -H "Content-Type: application/json" -H "Authorization: Bearer ' + this.token + '" --cert ' + this.patchCert + ' --insecure https://' + this.ip + ':8888/devices/0/mode';', subtype);
+
+    getOn: function(callback) {
+        var str;
+        var body;
+        str = 'curl -s -k -H "Content-Type: application/json" -H "Authorization: Bearer ' + this.token + '" --cert ' + this.patchCert + ' --insecure -X GET https://' + this.ip + ':8888/devices|jq \'.Devices[1].Operation.power\'';
+
+
+        this.execRequest(str, body, function(error, stdout, stderr) {
+            if (error) {
+                callback(error);
+            } else {
+                body = stdout;
+                body = body.substr(1, body.length - 3);
+                if (body == "Off") {
+                    callback(null, Characteristic.On.powerOff);
+                    //this.log("비활성화 확인");
+                } else if (body == "On") {
+                    //this.log("활성화 확인");
+                    callback(null, Characteristic.On.powerOn);
+                } else
+                    this.log("활성화 확인 오류");
+            }
+        }.bind(this));
+    },
+
+    setOn: function(state, callback) {
+
+        switch (state) {
+
+            case Characteristic.On.powerOn:
+                var str;
+                var body;
+                //this.log("켜기 설정");
+                str = 'curl -X PUT -d \'{"Operation": {"power" : "On"}}\'curl -X PUT -d \'{"options": ["Comode_Speed"]}\' -v -k -H "Content-Type: application/json" -H "Authorization: Bearer ' + this.token + '" --cert ' + this.patchCert + ' --insecure https://' + this.ip + ':8888/devices/0/mode';
+                this.execRequest(str, body, function(error, stdout, stderr) {
+                    if (error) {
+                        callback(error);
+                    } else {
+                        callback();
+                    }
+                }.bind(this));
+                break;
+
+            case Characteristic.On.powerOff:
+                var str;
+                var body;
+                //this.log("끄기 설정");
+                str = 'curl -X PUT -d \'{"Operation": {"power" : "Off"}}\'curl -X PUT -d \'{"options": ["Comode_off"]}\' -v -k -H "Content-Type: application/json" -H "Authorization: Bearer ' + this.token + '" --cert ' + this.patchCert + ' --insecure https://' + this.ip + ':8888/devices/0/mode';
+                this.execRequest(str, body, function(error, stdout, stderr) {
+                    if (error) {
+                        callback(error);
+                    } else {
+                        callback();
+                    }
+                }.bind(this));
+                break;
         }
     }
 }
